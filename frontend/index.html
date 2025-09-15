@@ -1,0 +1,59 @@
+<!-- Index com templates para JS e CSS-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sistema de Clientes</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-ativo">
+
+  <div class="layout">
+    <!-- Barra lateral -->
+    <div class="sidebar" id="sidebar" style="display:none;">
+      <h2>Menu</h2>
+      <button onclick="mostrarModulo('clientes')">Clientes</button>
+      <button onclick="mostrarModulo('usuarios')">Usuários</button>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="conteudo">
+      <!-- Login -->
+      <div id="caixa-login" class="card">
+        <h2>Login</h2>
+        <input id="usuario" placeholder="Usuário">
+        <input id="senha" type="password" placeholder="Senha">
+        <button onclick="fazerLogin()">Entrar</button>
+      </div>
+
+      <div id="app" style="display:none;">
+        <!-- Modulo Clientes -->
+        <div id="modulo-clientes" class="card" style="display:none;">
+          <h2>Clientes</h2>
+          <input id="nome" placeholder="Nome">
+          <input id="email" placeholder="Email">
+          <button onclick="adicionarCliente()">Adicionar</button>
+          <button onclick="listarClientes()">Listar</button>
+          <ul id="lista-clientes"></ul>
+        </div>
+        <!-- Modo de visualização do Cliente -->
+        <div id="modulo-cliente-view" class="card" style="display:none;">
+          <h2>Dados do Cliente</h2>
+          <div id="info-cliente"></div>
+          <button onclick="mostrarModulo('clientes')">Voltar</button>
+        </div>
+
+        <!-- Modulo Usuários -->
+        <div id="modulo-usuarios" class="card" style="display:none;">
+          <h2>Gerenciar Usuários</h2>
+          <input id="novoUsuario" placeholder="Usuário">
+          <input id="novaSenha" type="password" placeholder="Senha">
+          <button onclick="registrarUsuario()">Registrar</button>
+          <button onclick="listarUsuarios()">Listar</button>
+          <ul id="lista-usuarios"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/static/script.js"></script>
+</body>
+</html>
