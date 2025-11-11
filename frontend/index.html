@@ -1,4 +1,3 @@
-<!-- Index com templates para JS e CSS-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,16 +7,16 @@
 <body class="login-ativo">
 
   <div class="layout">
-    <!-- Barra lateral -->
     <div class="sidebar" id="sidebar" style="display:none;">
       <h2>Menu</h2>
       <button onclick="mostrarModulo('clientes')">Clientes</button>
+      <button onclick="mostrarModulo('fornecedores')">Fornecedores</button>
+      <button onclick="mostrarModulo('contas-receber')">Contas a Receber</button>
+      <button onclick="mostrarModulo('contas-pagar')">Contas a Pagar</button>
       <button onclick="mostrarModulo('usuarios')">Usuários</button>
     </div>
 
-    <!-- Conteúdo -->
     <div class="conteudo">
-      <!-- Login -->
       <div id="caixa-login" class="card">
         <h2>Login</h2>
         <input id="usuario" placeholder="Usuário">
@@ -26,23 +25,81 @@
       </div>
 
       <div id="app" style="display:none;">
-        <!-- Modulo Clientes -->
+        
         <div id="modulo-clientes" class="card" style="display:none;">
-          <h2>Clientes</h2>
-          <input id="nome" placeholder="Nome">
-          <input id="email" placeholder="Email">
-          <button onclick="adicionarCliente()">Adicionar</button>
+          <h2>Cadastro de Clientes</h2>
+          <input type="hidden" id="clienteIdEdit">
+          
+          <div class="input-grupo">
+            <input id="cliente-cnpj" placeholder="CNPJ (apenas números)*">
+            <button onclick="buscarCNPJ('cliente')" class="btn-inline">Consultar CNPJ</button>
+          </div>
+          <input id="cliente-razao_social" placeholder="Razão Social*">
+          <input id="cliente-nome_fantasia" placeholder="Nome Fantasia">
+          <input id="cliente-ie" placeholder="Inscrição Estadual (I.E.)">
+          <input id="cliente-email" placeholder="Email">
+          
+          <h3>Endereço</h3>
+          <input id="cliente-cep" placeholder="CEP">
+          <input id="cliente-rua" placeholder="Rua">
+          <input id="cliente-numero" placeholder="Número">
+          <input id="cliente-bairro" placeholder="Bairro">
+          <input id="cliente-cidade" placeholder="Cidade">
+          <input id="cliente-estado" placeholder="Estado (UF)">
+          
+          <input id="nome" placeholder="Nome (Antigo)" style="display:none;"> 
+
+          <button onclick="salvarCliente()">Salvar Cliente</button>
+          <button onclick="limparFormCliente()" class="btn-secundario">Novo Cliente</button>
+          
+          <hr>
+          <h2>Clientes Cadastrados</h2>
           <button onclick="listarClientes()">Listar</button>
           <ul id="lista-clientes"></ul>
         </div>
-        <!-- Modo de visualização do Cliente -->
+        
         <div id="modulo-cliente-view" class="card" style="display:none;">
           <h2>Dados do Cliente</h2>
           <div id="info-cliente"></div>
           <button onclick="mostrarModulo('clientes')">Voltar</button>
         </div>
 
-        <!-- Modulo Usuários -->
+        <div id="modulo-fornecedores" class="card" style="display:none;">
+          <h2>Cadastro de Fornecedores</h2>
+          <input type="hidden" id="fornecedorIdEdit">
+          
+          <div class="input-grupo">
+            <input id="fornecedor-cnpj" placeholder="CNPJ (apenas números)*">
+            <button onclick="buscarCNPJ('fornecedor')" class="btn-inline">Consultar CNPJ</button>
+          </div>
+          <input id="fornecedor-razao_social" placeholder="Razão Social*">
+          <input id="fornecedor-nome_fantasia" placeholder="Nome Fantasia">
+          <input id="fornecedor-ie" placeholder="Inscrição Estadual (I.E.)">
+          <input id="fornecedor-email" placeholder="Email">
+          
+          <h3>Endereço</h3>
+          <input id="fornecedor-cep" placeholder="CEP">
+          <input id="fornecedor-rua" placeholder="Rua">
+          <input id="fornecedor-numero" placeholder="Número">
+          <input id="fornecedor-bairro" placeholder="Bairro">
+          <input id="fornecedor-cidade" placeholder="Cidade">
+          <input id="fornecedor-estado" placeholder="Estado (UF)">
+
+          <button onclick="salvarFornecedor()">Salvar Fornecedor</button>
+          <button onclick="limparFormFornecedor()" class="btn-secundario">Novo Fornecedor</button>
+          
+          <hr>
+          <h2>Fornecedores Cadastrados</h2>
+          <button onclick="listarFornecedores()">Listar</button>
+          <ul id="lista-fornecedores"></ul>
+        </div>
+
+        <div id="modulo-fornecedor-view" class="card" style="display:none;">
+          <h2>Dados do Fornecedor</h2>
+          <div id="info-fornecedor"></div>
+          <button onclick="mostrarModulo('fornecedores')">Voltar</button>
+        </div>
+
         <div id="modulo-usuarios" class="card" style="display:none;">
           <h2>Gerenciar Usuários</h2>
           <input id="novoUsuario" placeholder="Usuário">
@@ -51,6 +108,111 @@
           <button onclick="listarUsuarios()">Listar</button>
           <ul id="lista-usuarios"></ul>
         </div>
+
+        <div id="modulo-usuario-view" class="card" style="display:none;">
+          <h2>Dados do Usuário</h2>
+          <div id="info-usuario"></div>
+          <button onclick="mostrarModulo('usuarios')">Voltar</button>
+        </div>
+
+        <div id="modulo-contas-receber" class="card" style="display:none;">
+          <h2>Contas a Receber</h2>
+          
+          <div id="form-nova-conta-receber">
+            <h3>Novo Lançamento</h3>
+            <select id="cr-cliente-id"></select>
+            <input id="cr-descricao" placeholder="Descrição*">
+            <input id="cr-valor" type="number" placeholder="Valor (ex: 150.50)*">
+            <input id="cr-data-vencimento" type="date" placeholder="Data Vencimento*">
+            <button onclick="adicionarContaReceber()">Adicionar Lançamento</button>
+          </div>
+          
+          <hr>
+          <h3>Lançamentos</h3>
+          <div class="filtro-bar">
+            <select id="filtro-cr-cliente"></select>
+            <select id="filtro-cr-status">
+              <option value="">Todos Status</option>
+              <option value="pendente">Pendente</option>
+              <option value="pago">Pago</option>
+              <option value="vencido">Vencido</option>
+            </select>
+            <input type="date" id="filtro-cr-data-inicio">
+            <input type="date" id="filtro-cr-data-fim">
+            <button onclick="listarContasReceber()" class="btn-inline">Filtrar</button>
+          </div>
+          
+          <div class="card-totais">
+            Total Pendente: <span id="cr-total" class="total-verde">R$ 0,00</span> |
+            Total Atrasado: <span id="cr-atrasado" class="total-vermelho">R$ 0,00</span>
+          </div>
+
+          <ul id="lista-contas-receber"></ul>
+        </div>
+
+        <div id="modulo-cr-edit" class="card" style="display:none;">
+          <h2>Editar Conta a Receber</h2>
+          <input type="hidden" id="edit-cr-id">
+          <p><strong>Descrição:</strong> <span id="edit-cr-descricao"></span></p>
+          <p><strong>Cliente:</strong> <span id="edit-cr-cliente"></span></p>
+          <p><strong>Valor Total:</strong> <span id="edit-cr-valor-total"></span></p>
+          
+          <label for="edit-cr-valor-pago">Valor Pago (Total):</label>
+          <input id="edit-cr-valor-pago" type="number" placeholder="Valor Pago">
+          
+          <button onclick="salvarPagamentoCR()">Salvar Pagamento</button>
+          <button onclick="mostrarModulo('contas-receber')" class="btn-secundario">Voltar</button>
+        </div>
+
+        <div id="modulo-contas-pagar" class="card" style="display:none;">
+          <h2>Contas a Pagar</h2>
+          
+          <div id="form-nova-conta-pagar">
+            <h3>Novo Lançamento</h3>
+            <select id="cp-fornecedor-id"></select>
+            <input id="cp-descricao" placeholder="Descrição*">
+            <input id="cp-valor" type="number" placeholder="Valor (ex: 150.50)*">
+            <input id="cp-data-vencimento" type="date" placeholder="Data Vencimento*">
+            <button onclick="adicionarContaPagar()">Adicionar Lançamento</button>
+          </div>
+          
+          <hr>
+          <h3>Lançamentos</h3>
+          <div class="filtro-bar">
+            <select id="filtro-cp-fornecedor"></select>
+            <select id="filtro-cp-status">
+              <option value="">Todos Status</option>
+              <option value="pendente">Pendente</option>
+              <option value="pago">Pago</option>
+              <option value="vencido">Vencido</option>
+            </select>
+            <input type="date" id="filtro-cp-data-inicio">
+            <input type="date" id="filtro-cp-data-fim">
+            <button onclick="listarContasPagar()" class="btn-inline">Filtrar</button>
+          </div>
+
+          <div class="card-totais">
+            Total Pendente: <span id="cp-total" class="total-verde">R$ 0,00</span> |
+            Total Atrasado: <span id="cp-atrasado" class="total-vermelho">R$ 0,00</span>
+          </div>
+
+          <ul id="lista-contas-pagar"></ul>
+        </div>
+
+        <div id="modulo-cp-edit" class="card" style="display:none;">
+          <h2>Editar Conta a Pagar</h2>
+          <input type="hidden" id="edit-cp-id">
+          <p><strong>Descrição:</strong> <span id="edit-cp-descricao"></span></p>
+          <p><strong>Fornecedor:</strong> <span id="edit-cp-fornecedor"></span></p>
+          <p><strong>Valor Total:</strong> <span id="edit-cp-valor-total"></span></p>
+          
+          <label for="edit-cp-valor-pago">Valor Pago (Total):</label>
+          <input id="edit-cp-valor-pago" type="number" placeholder="Valor Pago">
+          
+          <button onclick="salvarPagamentoCP()">Salvar Pagamento</button>
+          <button onclick="mostrarModulo('contas-pagar')" class="btn-secundario">Voltar</button>
+        </div>
+
       </div>
     </div>
   </div>

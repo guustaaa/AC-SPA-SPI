@@ -73,17 +73,37 @@ body.login-ativo {
   margin-bottom: 20px;
   font-size: 26px;
 }
+.card h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+.card p {
+  font-size: 16px;
+  line-height: 1.5;
+}
 
-input {
+input, select {
   display: block;
   width: 100%;
-  font-size: 18px;
-  padding: 15px;
-  margin: 15px 0;
+  font-size: 16px; 
+  padding: 12px; 
+  margin: 10px 0; 
   border: 1px solid #aaa;
   border-radius: 8px;
   box-sizing: border-box;
 }
+
+/* (Novo) Label para o campo de edição */
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+}
+
 
 button {
   width: 100%;
@@ -101,6 +121,69 @@ button:hover {
   background: #45a049;
 }
 
+.btn-secundario {
+  background: #aaa;
+}
+.btn-secundario:hover {
+  background: #888;
+}
+
+.input-grupo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.input-grupo input {
+  flex: 1;
+  margin: 10px 0; 
+}
+button.btn-inline {
+  width: auto;
+  padding: 12px 15px;
+  font-size: 16px;
+  margin: 0;
+  background: #3498db;
+}
+button.btn-inline:hover {
+  background: #2980b9;
+}
+
+.filtro-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.filtro-bar select, .filtro-bar input {
+  margin: 0;
+  flex: 1;
+}
+.filtro-bar button {
+  width: auto;
+  padding: 12px 15px;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* (Novo) Estilos dos totalizadores */
+.card-totais {
+  font-size: 18px;
+  margin: 15px 0;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+.total-verde {
+  color: #4CAF50;
+  font-weight: bold;
+}
+.total-vermelho {
+  color: #E74C3C;
+  font-weight: bold;
+}
+
+
 ul {
   list-style: none;
   padding: 0;
@@ -113,4 +196,10 @@ li {
 
 li:hover {
   background: #f1f1f1;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 25px 0;
 }

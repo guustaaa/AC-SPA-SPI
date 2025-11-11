@@ -5,3 +5,4 @@ pymysql # Modulo do MySQL para python
 python-multipart # Facilita genrenciamento de ASGI
 passlib[bcrypt] # hash's de senhas(versão específica do Bycript)
 bcrypt==3.2.2 # especifica versão do Bcript para garantir compatibilidade de metodos da lib
+requests #modulo requests para requisição na api cnpja
