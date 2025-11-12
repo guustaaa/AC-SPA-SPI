@@ -10,9 +10,9 @@ Projeto da Faculdade Utilizando as seguintes Tecnologias:
 
 - Login com usuário admin (senha admin123)
 - Cadastro de usuários apenas com usuário admin (menu usuários não aparece para usuários criados)
-- Cadastro de Clientes 
-- Listagem de Clientes
-- Tela de Dados do Cliente
+- Cadastro e edição de Clientes/Fornecedores
+- Cadastro e edição de Usuarios
+- Lançamento de Contas a Pagar/Contas a Receber
 
 # Como Rodar o Projeto 
 
