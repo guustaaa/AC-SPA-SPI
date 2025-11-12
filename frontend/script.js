@@ -327,7 +327,7 @@ async function prepararEdicaoCliente(id) {
 
 // --- MÓDULO DE FORNECEDORES---
 
-//Salva fornecedor
+//Salva ou Edita fornecedor
 async function salvarFornecedor() {
   let idEdit = document.getElementById("fornecedorIdEdit").value;
   
@@ -352,6 +352,12 @@ async function salvarFornecedor() {
 
   let url = "/fornecedores/";
   let method = "POST";
+
+  //Verifica se é edição
+  if (idEdit) {
+    url = "/fornecedores/" + idEdit;
+    method = "PUT";
+  }
   
   let res = await fetch(url, {
     method: method,
@@ -363,6 +369,7 @@ async function salvarFornecedor() {
     alert("Fornecedor salvo com sucesso!");
     limparFormFornecedor();
     listarFornecedores();
+    mostrarModulo("fornecedores"); // Garante que volte para a lista
   } else {
     let err = await res.json();
     alert("Erro ao salvar fornecedor: " + (err.detail || res.status));
@@ -405,18 +412,53 @@ async function listarFornecedores() {
   });
 }
 
-//Mostra config fornecedor
+//Mostra config fornecedor com botão de edição
 async function mostrarDetalheFornecedor(fornecedor) {
   let infoDiv = document.getElementById("info-fornecedor");
+  
+  //Adiciona todos os campos e o botão de editar
   infoDiv.innerHTML =
     "<p><b>ID:</b> " + fornecedor.id + "</p>" +
     "<p><b>CNPJ:</b> " + fornecedor.cnpj + "</p>" +
     "<p><b>Razão Social:</b> " + fornecedor.razao_social + "</p>" +
-    "<p><b>Nome Fantasia:</b> " + (fornecedor.nome_fantasia || "N/A") + "</p>";
+    "<p><b>Nome Fantasia:</b> " + (fornecedor.nome_fantasia || "N/A") + "</p>" +
+    "<p><b>I.E:</b> " + (fornecedor.ie || "N/A") + "</p>" +
+    "<p><b>Email:</b> " + (fornecedor.email || "N/A") + "</p>" +
+    "<h3>Endereço</h3>" +
+    "<p><b>CEP:</b> " + (fornecedor.cep || "N/A") + "</p>" +
+    "<p>" + (fornecedor.rua || "N/A") + ", " + (fornecedor.numero || "N/A") + " - " + (fornecedor.bairro || "N/A") + "</p>" +
+    "<p>" + (fornecedor.cidade || "N/A") + " - " + (fornecedor.estado || "N/A") + "</p>" +
+    "<br><button onclick='prepararEdicaoFornecedor(" + fornecedor.id + ")'>Editar Fornecedor</button>"; // (Novo) Botão Editar
     
   mostrarModulo("detalhe-fornecedor");
 }
 
+//Prepara o form para edição de fornecedor
+async function prepararEdicaoFornecedor(id) {
+  let res = await fetch("/fornecedores/" + id);
+  let dados = await res.json();
+  if (dados.erro) {
+      alert(dados.erro);
+      return;
+  }
+
+  // preenche inputs com os dados do fornecedor
+  document.getElementById("fornecedorIdEdit").value = dados.id;
+  document.getElementById("fornecedor-cnpj").value = dados.cnpj || "";
+  document.getElementById("fornecedor-razao_social").value = dados.razao_social || "";
+  document.getElementById("fornecedor-nome_fantasia").value = dados.nome_fantasia || "";
+  document.getElementById("fornecedor-ie").value = dados.ie || "";
+  document.getElementById("fornecedor-email").value = dados.email || "";
+  document.getElementById("fornecedor-cep").value = dados.cep || "";
+  document.getElementById("fornecedor-rua").value = dados.rua || "";
+  document.getElementById("fornecedor-numero").value = dados.numero || "";
+  document.getElementById("fornecedor-bairro").value = dados.bairro || "";
+  document.getElementById("fornecedor-cidade").value = dados.cidade || "";
+  document.getElementById("fornecedor-estado").value = dados.estado || "";
+  
+  // mostra o modulo de fornecedores
+  mostrarModulo("fornecedores");
+}
 
 // --- MÓDULO FINANCEIRO---
 

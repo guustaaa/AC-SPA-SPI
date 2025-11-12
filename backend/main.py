@@ -184,6 +184,8 @@ def detalhe_usuario(id_usuario: int, db: Session = Depends(get_db)):
     return {"id": usuario.id, "usuario": usuario.usuario, "eh_admin": usuario.eh_admin}
 
 #Rotas de Fornecedores
+
+
 @app.post("/fornecedores/")
 def cadastrar_fornecedor(dados: models.FornecedorEntrada, db: Session = Depends(get_db)):
     if not dados.cnpj or not dados.razao_social:
@@ -192,6 +194,33 @@ def cadastrar_fornecedor(dados: models.FornecedorEntrada, db: Session = Depends(
         raise HTTPException(status_code=400, detail="CNPJ já cadastrado")
     fornecedor = models.Fornecedor(**dados.dict())
     db.add(fornecedor)
+    db.commit()
+    db.refresh(fornecedor)
+    return fornecedor
+
+# (Novo) Rota de Edição de Fornecedor
+@app.put("/fornecedores/{id_fornecedor}")
+def editar_fornecedor(id_fornecedor: int, dados: models.FornecedorEntrada, db: Session = Depends(get_db)):
+    #Verifica se fornecedor existe
+    fornecedor = db.query(models.Fornecedor).filter(models.Fornecedor.id == id_fornecedor).first()
+    if not fornecedor:
+        raise HTTPException(status_code=404, detail="Fornecedor não encontrado")
+
+    #Verifica vínculos financeiros (Contas a Pagar)
+    vinculos = db.query(models.ContaPagar).filter(models.ContaPagar.fornecedor_id == id_fornecedor).first()
+    if vinculos:
+        raise HTTPException(status_code=400, detail="Fornecedor não pode ser editado pois possui lançamentos financeiros vinculados.")
+        
+    #Verifica se o CNPJ está sendo alterado para um que já existe
+    if dados.cnpj != fornecedor.cnpj:
+        if db.query(models.Fornecedor).filter_by(cnpj=dados.cnpj).first():
+            raise HTTPException(status_code=400, detail="Este CNPJ já pertence a outro fornecedor")
+
+    # Atualiza os campos
+    update_data = dados.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(fornecedor, key, value)
+    
     db.commit()
     db.refresh(fornecedor)
     return fornecedor
