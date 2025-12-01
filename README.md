@@ -3,7 +3,7 @@
 Projeto da Faculdade Utilizando as seguintes Tecnologias:
 
 - FASTAPI no Backend
-- Pandas e matplotlib no Backend
+
 - MySQL no Banco de dados
 - HTML, JS, CSS puro no Frontend
 
@@ -15,6 +15,11 @@ Projeto da Faculdade Utilizando as seguintes Tecnologias:
 - Cadastro e edição de Usuarios
 - Lançamento de Contas a Pagar/Contas a Receber
 - Modulo de Dashboards com B.I. para geração de gráficos
+
+# Diagramas
+
+![Diagrama de Classes](Class.png)
+![Diagrama de Caso de Uso](UseCase.png)
 
 # Como Rodar o Projeto 
 
