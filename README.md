@@ -1,4 +1,4 @@
-# Projeto AC ### Sistema de Cadastro de Clientes e Usuários (FASTAPI + MySQL) Dockerizado 
+# Projeto AC ### Sistema de Gestão Financeira (FASTAPI + MySQL) Dockerizado 
 
 Projeto da Faculdade Utilizando as seguintes Tecnologias:
 
