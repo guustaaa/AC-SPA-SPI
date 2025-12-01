@@ -14,7 +14,11 @@
       <button onclick="mostrarModulo('contas-receber')">Contas a Receber</button>
       <button onclick="mostrarModulo('contas-pagar')">Contas a Pagar</button>
       <button onclick="mostrarModulo('usuarios')">Usuários</button>
+
+      <button onclick="mostrarModulo('contas-pagar')">Contas a Pagar</button>
+      <button onclick="mostrarModulo('dashboard')">Dashboard</button> <button onclick="mostrarModulo('usuarios')">Usuários</button>
     </div>
+
 
     <div class="conteudo">
       <div id="caixa-login" class="card">
@@ -212,7 +216,99 @@
           <button onclick="salvarPagamentoCP()">Salvar Pagamento</button>
           <button onclick="mostrarModulo('contas-pagar')" class="btn-secundario">Voltar</button>
         </div>
+        <div id="modulo-dashboard" class="card" style="display:none;">
+          <h2>Dashboard Financeiro</h2>
+          
+          <div class="input-grupo dashboard-filtros" style="background:#f1f1f1; padding:15px; border-radius:8px;">
+            <div style="flex:1;">
+              <label>Período:</label>
+              <div style="display:flex; gap:5px;">
+                  <input type="date" id="dash-inicio">
+                  <input type="date" id="dash-fim">
+              </div>
+            </div>
+            
+            <div style="flex:1;">
+                <label>Fornecedor:</label>
+                <select id="dash-fornecedor" onchange="carregarDashboard()">
+                    <option value="">Todos os Fornecedores</option>
+                </select>
+            </div>
 
+            <div style="flex:1;">
+                <label>Status:</label>
+                <select id="dash-status" onchange="carregarDashboard()">
+                    <option value="">Todos os Status</option>
+                    <option value="pendente">Pendente</option>
+                    <option value="pago">Pago</option>
+                    <option value="vencido">Vencido</option>
+                </select>
+            </div>
+
+            <button onclick="carregarDashboard()" class="btn-inline" style="height:45px; margin-top:28px;">Filtrar</button>
+          </div>
+
+          <div style="margin-top:10px; padding:10px; border:1px dashed #ccc; border-radius:8px;">
+            <label style="margin-top:0;">Exibir Gráficos:</label>
+            <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                <div>
+                    <input type="checkbox" id="chk-pizza" checked onchange="toggleGrafico('container-pizza')" style="width:auto; display:inline;"> 
+                    Dívida (Pizza)
+                </div>
+                <div>
+                    <input type="checkbox" id="chk-barras" checked onchange="toggleGrafico('container-barras')" style="width:auto; display:inline;"> 
+                    Geral (Barras)
+                </div>
+                <div>
+                    <input type="checkbox" id="chk-forn-detalhe" checked onchange="toggleGrafico('container-forn-detalhe')" style="width:auto; display:inline;"> 
+                    Por Fornecedor (Pagos/Pend)
+                </div>
+                <div>
+                    <input type="checkbox" id="chk-linha" checked onchange="toggleGrafico('container-linha')" style="width:auto; display:inline;"> 
+                    Saldo (Linha Tempo)
+                </div>
+            </div>
+          </div>
+
+          <div class="dashboard-resumo">
+            <div class="card-info">
+              <h3>Total a Pagar (Aberto)</h3>
+              <span id="dash-aberto" class="total-vermelho">R$ 0,00</span>
+            </div>
+            <div class="card-info">
+              <h3>Total Receitas</h3>
+              <span id="dash-total-rec" class="total-verde">R$ 0,00</span>
+            </div>
+            <div class="card-info">
+              <h3>Saldo Geral</h3>
+              <span id="dash-saldo" style="font-weight:bold;">R$ 0,00</span>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="dashboard-grid">
+            <div class="grafico-container" id="container-pizza">
+              <h3>Dívida por Fornecedor (Pendentes)</h3>
+              <img id="img-grafico-pizza" alt="Sem dados" style="max-width:100%;">
+            </div>
+            
+            <div class="grafico-container" id="container-barras">
+              <h3>Situação Geral: Pago vs Pendente</h3>
+              <img id="img-grafico-barras" alt="Carregando..." style="max-width:100%;">
+            </div>
+
+            <div class="grafico-container" id="container-forn-detalhe" style="min-width: 100%;">
+                <h3>Detalhe por Fornecedor (Pago vs Pendente)</h3>
+                <img id="img-grafico-fornecedor-barra" alt="Carregando..." style="max-width:100%;">
+            </div>
+
+            <div class="grafico-container" id="container-linha" style="min-width: 100%;">
+                <h3>Evolução do Saldo</h3>
+                <img id="img-grafico-linha" alt="Carregando..." style="max-width:100%;">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -117,6 +117,7 @@ function mostrarModulo(secao) {
   document.getElementById("modulo-contas-pagar").style.display = "none";
   document.getElementById("modulo-cr-edit").style.display = "none"; 
   document.getElementById("modulo-cp-edit").style.display = "none";
+  document.getElementById("modulo-dashboard").style.display = "none";
 
   // Exibe o módulo solicitado
   if (secao === "clientes") {
@@ -141,8 +142,109 @@ function mostrarModulo(secao) {
     document.getElementById("modulo-cr-edit").style.display = "block";
   } else if (secao === "cp-edit") { 
     document.getElementById("modulo-cp-edit").style.display = "block";
+  } else if (secao === "dashboard") { // dash
+    document.getElementById("modulo-dashboard").style.display = "block";
+    popularDropdownFornecedoresDashboard(); // popula
+    carregarDashboard(); // Carrega dash
+  }
+
+}
+// popula dropdown com dados dos fornecedores pela rota
+async function popularDropdownFornecedoresDashboard() {
+  try {
+    let res = await fetch("/fornecedores/");
+    let data = await res.json();
+    let select = document.getElementById("dash-fornecedor");
+    
+    if(select) {
+        select.innerHTML = "<option value=''>Todos os Fornecedores</option>";
+        data.forEach(f => {
+            let nome = f.nome_fantasia || f.razao_social;
+            select.innerHTML += `<option value="${f.id}">${nome}</option>`;
+        });
+    }
+  } catch(e) { console.error("Erro ao popular dropdown dashboard", e); }
+}
+// Ativa e desativa grafico comb ase nas checkboxes
+function toggleGrafico(idContainer) {
+  let container = document.getElementById(idContainer);
+  if (container.style.display === "none") {
+      container.style.display = "block";
+  } else {
+      container.style.display = "none";
   }
 }
+
+// Carrega informações do dashboard a partir de endopoint para geração
+async function carregarDashboard() {
+let inicioElem = document.getElementById("dash-inicio");
+let fimElem = document.getElementById("dash-fim");
+let fornElem = document.getElementById("dash-fornecedor");
+let statusElem = document.getElementById("dash-status");
+
+if(!inicioElem) return; 
+
+let payload = {};
+if (inicioElem.value) payload.data_inicio = inicioElem.value;
+if (fimElem.value) payload.data_fim = fimElem.value;
+if (fornElem.value) payload.fornecedor_id = parseInt(fornElem.value);
+if (statusElem.value) payload.status = statusElem.value;
+
+// Loadzin
+let imgs = document.querySelectorAll(".grafico-container img");
+if(imgs) imgs.forEach(img => img.style.opacity = "0.5");
+
+try {
+  let res = await fetch("/dashboard/gerar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) throw new Error("Erro ao carregar dados");
+
+  let data = await res.json();
+
+  // --- Atualiza Gráficos ---
+
+  // constante para atualizar a imagem dinamicamente
+  const setImg = (id, base64) => {
+      let el = document.getElementById(id);
+      if(el) {
+          if(base64) {
+              el.src = base64;
+              el.style.display = "inline";
+          } else {
+              el.style.display = "none";
+          }
+      }
+  };
+
+  setImg("img-grafico-pizza", data.graficos.pizza_fornecedor);
+  setImg("img-grafico-barras", data.graficos.barras_geral);
+  setImg("img-grafico-fornecedor-barra", data.graficos.barras_fornecedor); // Novo
+  setImg("img-grafico-linha", data.graficos.linha_tempo); // Novo
+
+  // Atualiza resumo dos totais
+  if(document.getElementById("dash-aberto")) 
+      document.getElementById("dash-aberto").innerText = `R$ ${data.resumo.total_aberto.toFixed(2)}`;
+  
+  if(document.getElementById("dash-total-rec"))
+      document.getElementById("dash-total-rec").innerText = `R$ ${data.resumo.total_rec.toFixed(2)}`;
+  
+  let saldo = document.getElementById("dash-saldo");
+  if(saldo) {
+      saldo.innerText = `R$ ${data.resumo.saldo.toFixed(2)}`;
+      saldo.style.color = data.resumo.saldo >= 0 ? "#4CAF50" : "#E74C3C";
+  }
+
+} catch (e) {
+    console.error(e);
+} finally {
+    if(imgs) imgs.forEach(img => img.style.opacity = "1");
+}
+}
+
 
 // --- MÓDULO DE CLIENTES ---
 
@@ -292,11 +394,30 @@ async function mostrarDetalhe(cliente) {
     "<p><b>CEP:</b> " + (cliente.cep || "N/A") + "</p>" +
     "<p>" + (cliente.rua || "N/A") + ", " + (cliente.numero || "N/A") + " - " + (cliente.bairro || "N/A") + "</p>" +
     "<p>" + (cliente.cidade || "N/A") + " - " + (cliente.estado || "N/A") + "</p>" +
-    "<br><button onclick='prepararEdicaoCliente(" + cliente.id + ")'>Editar Cliente</button>"; //Botão Editar
+    "<br><button onclick='prepararEdicaoCliente(" + cliente.id + ")'>Editar Cliente</button>" + 
+    "<button onclick='removerCliente(" + cliente.id + ")' class='btn-secundario btn-perigo'>Remover</button>";
     
   mostrarModulo("detalhe");
 }
+//Remove cliente
+async function removerCliente(id) {
+  if (!confirm("Tem certeza que deseja remover este cliente? Esta ação não pode ser desfeita.")) {
+      return;
+  }
 
+  let res = await fetch("/clientes/" + id, {
+      method: "DELETE"
+  });
+
+  if (res.ok) {
+      alert("Cliente removido com sucesso!");
+      mostrarModulo("clientes");
+      listarClientes(); // Atualiza a lista
+  } else {
+      let err = await res.json();
+      alert("Erro ao remover: " + (err.detail || res.status));
+  }
+}
 //Prepara o form para edição
 async function prepararEdicaoCliente(id) {
     let res = await fetch("/clientes/" + id);
@@ -412,7 +533,7 @@ async function listarFornecedores() {
   });
 }
 
-//Mostra config fornecedor com botão de edição
+//Mostra config fornecedor 
 async function mostrarDetalheFornecedor(fornecedor) {
   let infoDiv = document.getElementById("info-fornecedor");
   
@@ -428,9 +549,30 @@ async function mostrarDetalheFornecedor(fornecedor) {
     "<p><b>CEP:</b> " + (fornecedor.cep || "N/A") + "</p>" +
     "<p>" + (fornecedor.rua || "N/A") + ", " + (fornecedor.numero || "N/A") + " - " + (fornecedor.bairro || "N/A") + "</p>" +
     "<p>" + (fornecedor.cidade || "N/A") + " - " + (fornecedor.estado || "N/A") + "</p>" +
-    "<br><button onclick='prepararEdicaoFornecedor(" + fornecedor.id + ")'>Editar Fornecedor</button>"; // (Novo) Botão Editar
+    "<br><button onclick='prepararEdicaoFornecedor(" + fornecedor.id + ")'>Editar Fornecedor</button>" +
+    "<button onclick='removerFornecedor(" + fornecedor.id + ")' class='btn-secundario btn-perigo'>Remover</button>";
     
   mostrarModulo("detalhe-fornecedor");
+}
+
+//Remove fornecedor
+async function removerFornecedor(id) {
+  if (!confirm("Tem certeza que deseja remover este fornecedor? Esta ação não pode ser desfeita.")) {
+      return;
+  }
+
+  let res = await fetch("/fornecedores/" + id, {
+      method: "DELETE"
+  });
+
+  if (res.ok) {
+      alert("Fornecedor removido com sucesso!");
+      mostrarModulo("fornecedores");
+      listarFornecedores(); // Atualiza a lista
+  } else {
+      let err = await res.json();
+      alert("Erro ao remover: " + (err.detail || res.status));
+  }
 }
 
 //Prepara o form para edição de fornecedor

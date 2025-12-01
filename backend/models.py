@@ -149,3 +149,10 @@ class ContaPagarEntrada(BaseModel):
 #atualização de pagamento
 class PagamentoUpdate(BaseModel):
     valor_pago: float
+
+#filtros dashboard
+class DashboardFiltro(BaseModel):
+    data_inicio: Optional[dt_date] = None
+    data_fim: Optional[dt_date] = None
+    fornecedor_id: Optional[int] = None
+    status: Optional[str] = None
